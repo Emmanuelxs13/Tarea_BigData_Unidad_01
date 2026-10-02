@@ -2,19 +2,27 @@
 
 **Institución:** IU Pascual Bravo  
 **Asignatura:** ET0155 - Fundamentos de Big Data  
-**Periodo:** 2024-2  
+**Periodo:** 2026-2  
 **Grupo:** N  
 **Caso de estudio:** Empresa Gaseosas Poderosas  
-**Fecha del informe:** 2026-09-26  
+**Fecha del informe:** 2026-10-01
 
 ## Miembros del equipo
 
-| No. | Nombre |
-|---:|---|
-| 1 | Emmanuel Berrio Jimenez |
-| 2 | Juan Esteban Correa |
+| No. | Nombre                   |
+| --: | ------------------------ |
+|   1 | Emmanuel Berrio Jimenez  |
+|   2 | Juan Esteban Correa Cano |
 
-> **Nota de evidencia.** Los resultados numéricos de procesamiento y los ejemplos de registros se consolidan a partir del informe Word y los videos entregados en el workspace. Los marcadores de capturas deben reemplazarse por las imágenes definitivas tomadas en pgAdmin y Excel.
+> **Nota de evidencia.** Este documento resume el contenido del informe PDF y los artefactos disponibles en el repositorio. Los resultados numéricos del benchmark se conservan como valores observados en las evidencias entregadas y pueden variar al repetir la ejecución en otro equipo.
+
+### Archivos de soporte
+
+- [Informe PDF](Informe_Gaseosas_Poderosas.pdf)
+- [Script ETL](algoritmo-etl.py)
+- [Script de cálculo de tamaño y tiempo](algoritmo-calculo-tamanio.py)
+- [Base de datos SQL](bigdata.sql)
+- [Datos geográficos DANE](colombia-dane-departamentos.csv)
 
 ## 1. Descripción de la Tarea
 
@@ -99,14 +107,14 @@ erDiagram
 
 ### Cardinalidades
 
-| Relación | Cardinalidad | Interpretación |
-|---|---:|---|
-| `regiones` - `departamentos` | 1:M | Una región agrupa varios departamentos; cada departamento pertenece a una región. |
-| `departamentos` - `municipios` | 1:M | Un departamento contiene varios municipios; cada municipio pertenece a un departamento. |
-| `departamentos` - `operaciones` | 1:M | Un departamento puede aparecer en muchas operaciones. |
-| `municipios` - `operaciones` | 1:M | Un municipio puede tener muchas operaciones. |
-| `productos` - `operaciones` | 1:M | Un producto puede estar presente en muchas operaciones. |
-| `regiones` - `operaciones` | 1:M | Una región puede concentrar muchas operaciones mediante `id_region`. |
+| Relación                        | Cardinalidad | Interpretación                                                                          |
+| ------------------------------- | -----------: | --------------------------------------------------------------------------------------- |
+| `regiones` - `departamentos`    |          1:M | Una región agrupa varios departamentos; cada departamento pertenece a una región.       |
+| `departamentos` - `municipios`  |          1:M | Un departamento contiene varios municipios; cada municipio pertenece a un departamento. |
+| `departamentos` - `operaciones` |          1:M | Un departamento puede aparecer en muchas operaciones.                                   |
+| `municipios` - `operaciones`    |          1:M | Un municipio puede tener muchas operaciones.                                            |
+| `productos` - `operaciones`     |          1:M | Un producto puede estar presente en muchas operaciones.                                 |
+| `regiones` - `operaciones`      |          1:M | Una región puede concentrar muchas operaciones mediante `id_region`.                    |
 
 ## 3. Diccionario de Datos
 
@@ -114,79 +122,79 @@ erDiagram
 
 ### 3.1 Tabla `departamentos`
 
-| Nombre de campo | Tipo de dato | Longitud/Tamaño | PK | FK | Nulabilidad | Descripción |
-|---|---|---:|:---:|:---:|:---:|---|
-| `id_departamento` | INTEGER | 4 bytes | Sí | No | NOT NULL | Identificador interno único del departamento. |
-| `nombre` | VARCHAR | 70 | No | No | NOT NULL | Nombre completo del departamento. |
-| `abb` | VARCHAR | 3 | No | No | NULL | Abreviatura del departamento. |
-| `codigo_dane` | VARCHAR | 10 | No | No | NULL | Código oficial DANE del departamento. |
-| `codigo_region` | INTEGER | 4 bytes | No | Sí, `regiones.id_region` | NULL | Región geográfica asignada. |
-| `poblacion` | INTEGER | 4 bytes | No | No | NULL | Población de referencia del departamento. |
+| Nombre de campo   | Tipo de dato | Longitud/Tamaño | PK  |            FK            | Nulabilidad | Descripción                                   |
+| ----------------- | ------------ | --------------: | :-: | :----------------------: | :---------: | --------------------------------------------- |
+| `id_departamento` | INTEGER      |         4 bytes | Sí  |            No            |  NOT NULL   | Identificador interno único del departamento. |
+| `nombre`          | VARCHAR      |              70 | No  |            No            |  NOT NULL   | Nombre completo del departamento.             |
+| `abb`             | VARCHAR      |               3 | No  |            No            |    NULL     | Abreviatura del departamento.                 |
+| `codigo_dane`     | VARCHAR      |              10 | No  |            No            |    NULL     | Código oficial DANE del departamento.         |
+| `codigo_region`   | INTEGER      |         4 bytes | No  | Sí, `regiones.id_region` |    NULL     | Región geográfica asignada.                   |
+| `poblacion`       | INTEGER      |         4 bytes | No  |            No            |    NULL     | Población de referencia del departamento.     |
 
 ### 3.2 Tabla `municipios`
 
-| Nombre de campo | Tipo de dato | Longitud/Tamaño | PK | FK | Nulabilidad | Descripción |
-|---|---|---:|:---:|:---:|:---:|---|
-| `id_departamento` | INTEGER | 4 bytes | No | Sí, `departamentos.id_departamento` | NOT NULL | Departamento al que pertenece el municipio. |
-| `id_municipio` | INTEGER | 4 bytes | Sí | No | NOT NULL | Identificador interno único del municipio. |
-| `nombre` | VARCHAR | 70 | No | No | NOT NULL | Nombre del municipio. |
-| `abb` | VARCHAR | 5 | No | No | NULL | Abreviatura del municipio. |
-| `codigo_dane` | VARCHAR | 10 | No | No | NULL | Código oficial DANE del municipio. |
-| `poblacion` | INTEGER | 4 bytes | No | No | NULL | Población de referencia del municipio. |
+| Nombre de campo   | Tipo de dato | Longitud/Tamaño | PK  |                 FK                  | Nulabilidad | Descripción                                 |
+| ----------------- | ------------ | --------------: | :-: | :---------------------------------: | :---------: | ------------------------------------------- |
+| `id_departamento` | INTEGER      |         4 bytes | No  | Sí, `departamentos.id_departamento` |  NOT NULL   | Departamento al que pertenece el municipio. |
+| `id_municipio`    | INTEGER      |         4 bytes | Sí  |                 No                  |  NOT NULL   | Identificador interno único del municipio.  |
+| `nombre`          | VARCHAR      |              70 | No  |                 No                  |  NOT NULL   | Nombre del municipio.                       |
+| `abb`             | VARCHAR      |               5 | No  |                 No                  |    NULL     | Abreviatura del municipio.                  |
+| `codigo_dane`     | VARCHAR      |              10 | No  |                 No                  |    NULL     | Código oficial DANE del municipio.          |
+| `poblacion`       | INTEGER      |         4 bytes | No  |                 No                  |    NULL     | Población de referencia del municipio.      |
 
 ### 3.3 Tabla `productos`
 
-| Nombre de campo | Tipo de dato | Longitud/Tamaño | PK | FK | Nulabilidad | Descripción |
-|---|---|---:|:---:|:---:|:---:|---|
-| `id_producto` | INTEGER | 4 bytes | Sí | No | NOT NULL | Identificador único del producto. |
-| `nombre` | VARCHAR | 20 | No | No | NOT NULL | Nombre comercial de la gaseosa. |
-| `precio` | INTEGER | 4 bytes | No | No | NULL | Precio unitario utilizado para calcular el monto de venta. |
+| Nombre de campo | Tipo de dato | Longitud/Tamaño | PK  | FK  | Nulabilidad | Descripción                                                |
+| --------------- | ------------ | --------------: | :-: | :-: | :---------: | ---------------------------------------------------------- |
+| `id_producto`   | INTEGER      |         4 bytes | Sí  | No  |  NOT NULL   | Identificador único del producto.                          |
+| `nombre`        | VARCHAR      |              20 | No  | No  |  NOT NULL   | Nombre comercial de la gaseosa.                            |
+| `precio`        | INTEGER      |         4 bytes | No  | No  |    NULL     | Precio unitario utilizado para calcular el monto de venta. |
 
 ### 3.4 Tabla `regiones`
 
-| Nombre de campo | Tipo de dato | Longitud/Tamaño | PK | FK | Nulabilidad | Descripción |
-|---|---|---:|:---:|:---:|:---:|---|
-| `id_region` | INTEGER | 4 bytes | Sí | No | NOT NULL | Identificador único de la región geográfica. |
-| `descripcion` | TEXT | Variable | No | No | NULL | Descripción ampliada de la región. |
-| `nombre_region` | VARCHAR | 100 | No | No | NOT NULL | Nombre de la región. |
+| Nombre de campo | Tipo de dato | Longitud/Tamaño | PK  | FK  | Nulabilidad | Descripción                                  |
+| --------------- | ------------ | --------------: | :-: | :-: | :---------: | -------------------------------------------- |
+| `id_region`     | INTEGER      |         4 bytes | Sí  | No  |  NOT NULL   | Identificador único de la región geográfica. |
+| `descripcion`   | TEXT         |        Variable | No  | No  |    NULL     | Descripción ampliada de la región.           |
+| `nombre_region` | VARCHAR      |             100 | No  | No  |  NOT NULL   | Nombre de la región.                         |
 
 ### 3.5 Tabla `operaciones`
 
-| Nombre de campo | Tipo de dato | Longitud/Tamaño | PK | FK | Nulabilidad | Descripción |
-|---|---|---:|:---:|:---:|:---:|---|
-| `id_registro` | INTEGER | 4 bytes | Sí | No | NOT NULL | Identificador único de la operación. |
-| `id_departamento` | INTEGER | 4 bytes | No | Sí, `departamentos.id_departamento` | NOT NULL | Departamento donde se registra la venta. |
-| `id_municipio` | INTEGER | 4 bytes | No | Sí, `municipios.id_municipio` | NOT NULL | Municipio donde se registra la venta. |
-| `id_producto` | INTEGER | 4 bytes | No | Sí, `productos.id_producto` | NOT NULL | Producto vendido. |
-| `fecha` | VARCHAR | 10 | No | No | NULL | Fecha de la operación. El formato objetivo es `AAAA-MM-DD`. |
-| `cantidad` | INTEGER | 4 bytes | No | No | NULL | Unidades vendidas en la operación. |
-| `estado` | VARCHAR | 1 | No | No | NULL | Estado de la operación: `V` válida o `I` inválida. |
-| `id_region` | INTEGER | 4 bytes | No | Sí, `regiones.id_region` | NULL | Región derivada del departamento. |
-| `modificado` | VARCHAR | 2 | No | No | NULL | Indicador de corrección: `SI` o `NO`. |
-| `causa` | VARCHAR | 255 | No | No | NULL | Motivo y tratamiento aplicado a la corrección. |
+| Nombre de campo   | Tipo de dato | Longitud/Tamaño | PK  |                 FK                  | Nulabilidad | Descripción                                                 |
+| ----------------- | ------------ | --------------: | :-: | :---------------------------------: | :---------: | ----------------------------------------------------------- |
+| `id_registro`     | INTEGER      |         4 bytes | Sí  |                 No                  |  NOT NULL   | Identificador único de la operación.                        |
+| `id_departamento` | INTEGER      |         4 bytes | No  | Sí, `departamentos.id_departamento` |  NOT NULL   | Departamento donde se registra la venta.                    |
+| `id_municipio`    | INTEGER      |         4 bytes | No  |    Sí, `municipios.id_municipio`    |  NOT NULL   | Municipio donde se registra la venta.                       |
+| `id_producto`     | INTEGER      |         4 bytes | No  |     Sí, `productos.id_producto`     |  NOT NULL   | Producto vendido.                                           |
+| `fecha`           | VARCHAR      |              10 | No  |                 No                  |    NULL     | Fecha de la operación. El formato objetivo es `AAAA-MM-DD`. |
+| `cantidad`        | INTEGER      |         4 bytes | No  |                 No                  |    NULL     | Unidades vendidas en la operación.                          |
+| `estado`          | VARCHAR      |               1 | No  |                 No                  |    NULL     | Estado de la operación: `V` válida o `I` inválida.          |
+| `id_region`       | INTEGER      |         4 bytes | No  |      Sí, `regiones.id_region`       |    NULL     | Región derivada del departamento.                           |
+| `modificado`      | VARCHAR      |               2 | No  |                 No                  |    NULL     | Indicador de corrección: `SI` o `NO`.                       |
+| `causa`           | VARCHAR      |             255 | No  |                 No                  |    NULL     | Motivo y tratamiento aplicado a la corrección.              |
 
 ### 3.6 Vista `vista_operaciones`
 
 La vista presenta una proyección analítica de las operaciones, reemplazando códigos por nombres y exponiendo el cálculo `total_venta`. Los nombres de columnas se documentan según la consulta y el informe entregados.
 
-| Nombre de campo | Tipo de dato lógico | Longitud/Tamaño | PK | FK | Nulabilidad | Descripción |
-|---|---|---:|:---:|:---:|:---:|---|
-| `id_registro` | INTEGER | 4 bytes | No | No | NOT NULL | Identificador de la operación de origen. |
-| `id_departamento` | INTEGER | 4 bytes | No | No | NULL | Código interno del departamento. |
-| `departamento` | VARCHAR | 70 | No | No | NULL | Nombre del departamento. |
-| `id_municipio` | INTEGER | 4 bytes | No | No | NULL | Código interno del municipio. |
-| `municipio` | VARCHAR | 70 | No | No | NULL | Nombre del municipio. |
-| `id_producto` | INTEGER | 4 bytes | No | No | NULL | Código interno del producto. |
-| `producto` | VARCHAR | 20 | No | No | NULL | Nombre comercial del producto. |
-| `precio` | INTEGER | 4 bytes | No | No | NULL | Precio unitario. |
-| `fecha` | VARCHAR | 10 | No | No | NULL | Fecha de la operación. |
-| `cantidad` | INTEGER | 4 bytes | No | No | NULL | Unidades vendidas. |
-| `estado` | VARCHAR | 1 | No | No | NULL | Estado de la operación. |
-| `id_region` | INTEGER | 4 bytes | No | No | NULL | Identificador de la región. |
-| `region` | VARCHAR | 100 | No | No | NULL | Nombre de la región. |
-| `total_venta` | NUMERIC/INTEGER | Según expresión | No | No | NULL | Resultado de `cantidad * precio`. |
-| `modificado` | VARCHAR | 2 | No | No | NULL | Indicador de si la operación fue corregida. |
-| `causa` | VARCHAR | 255 | No | No | NULL | Causa de la transformación aplicada. |
+| Nombre de campo   | Tipo de dato lógico | Longitud/Tamaño | PK  | FK  | Nulabilidad | Descripción                                 |
+| ----------------- | ------------------- | --------------: | :-: | :-: | :---------: | ------------------------------------------- |
+| `id_registro`     | INTEGER             |         4 bytes | No  | No  |  NOT NULL   | Identificador de la operación de origen.    |
+| `id_departamento` | INTEGER             |         4 bytes | No  | No  |    NULL     | Código interno del departamento.            |
+| `departamento`    | VARCHAR             |              70 | No  | No  |    NULL     | Nombre del departamento.                    |
+| `id_municipio`    | INTEGER             |         4 bytes | No  | No  |    NULL     | Código interno del municipio.               |
+| `municipio`       | VARCHAR             |              70 | No  | No  |    NULL     | Nombre del municipio.                       |
+| `id_producto`     | INTEGER             |         4 bytes | No  | No  |    NULL     | Código interno del producto.                |
+| `producto`        | VARCHAR             |              20 | No  | No  |    NULL     | Nombre comercial del producto.              |
+| `precio`          | INTEGER             |         4 bytes | No  | No  |    NULL     | Precio unitario.                            |
+| `fecha`           | VARCHAR             |              10 | No  | No  |    NULL     | Fecha de la operación.                      |
+| `cantidad`        | INTEGER             |         4 bytes | No  | No  |    NULL     | Unidades vendidas.                          |
+| `estado`          | VARCHAR             |               1 | No  | No  |    NULL     | Estado de la operación.                     |
+| `id_region`       | INTEGER             |         4 bytes | No  | No  |    NULL     | Identificador de la región.                 |
+| `region`          | VARCHAR             |             100 | No  | No  |    NULL     | Nombre de la región.                        |
+| `total_venta`     | NUMERIC/INTEGER     | Según expresión | No  | No  |    NULL     | Resultado de `cantidad * precio`.           |
+| `modificado`      | VARCHAR             |               2 | No  | No  |    NULL     | Indicador de si la operación fue corregida. |
+| `causa`           | VARCHAR             |             255 | No  | No  |    NULL     | Causa de la transformación aplicada.        |
 
 ## 4. Corrida del Algoritmo ETL
 
@@ -249,9 +257,7 @@ connection.commit()
 
 Cuando una operación de inserción falla, el algoritmo ejecuta `rollback()` para impedir que la transacción quede abortada y poder registrar el error de forma controlada. El resultado final alimenta `vista_operaciones`, que es la única superficie usada para las consultas de negocio.
 
-![Captura ETL Executed](evidencias/captura-etl-executed.png)
-
-![Captura carga PostgreSQL](evidencias/captura-carga-postgresql.png)
+La evidencia audiovisual de esta etapa está disponible en [evidencia_algoritmo_etl.mp4](evidencia_algoritmo_etl.mp4). Las consultas y salidas incluidas en el PDF sirven como respaldo visual de la ejecución en pgAdmin.
 
 ## 5. Modificación del Algoritmo ETL (Inclusión de Región)
 
@@ -339,23 +345,23 @@ La calidad de datos se controló con análisis exploratorio, reglas de validaci�
 
 ### 6.1 Tipos de incidencias y tratamiento
 
-| Tipo | Campo afectado | Incidencia | Regla de transformación | Evidencia o causa registrada |
-|---|---|---|---|---|
-| A | `fecha` | Fecha fuera del formato `AAAA-MM-DD`. Ejemplo: `024-07-17`. | Convertir la cadena al formato ISO mediante lógica `CASE` y conversión de fecha. | `Formato Fecha Corregido` |
-| B | `cantidad` | Cantidad igual a cero. | Imputar el promedio de ventas del municipio correspondiente, excluyendo ceros cuando sea necesario. | `Imputación Promedio Municipio` |
-| C | `cantidad` | Cantidad negativa. | Convertir a positivo mediante `ABS(cantidad)`. | `Signo Negativo Corregido` |
-| D | `id_departamento` | Código igual a cero o nulo. | Recuperar el departamento asociado al municipio conocido en otras operaciones. | `Departamento Imputado` |
-| E | `id_producto` | Producto faltante en Támesis, Antioquia. | Asignar directamente el código del producto `NARANJITA`. | `Producto Imputado (Naranjita)` |
+| Tipo | Campo afectado    | Incidencia                                                  | Regla de transformación                                                                             | Evidencia o causa registrada    |
+| ---- | ----------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------- |
+| A    | `fecha`           | Fecha fuera del formato `AAAA-MM-DD`. Ejemplo: `024-07-17`. | Convertir la cadena al formato ISO mediante lógica `CASE` y conversión de fecha.                    | `Formato Fecha Corregido`       |
+| B    | `cantidad`        | Cantidad igual a cero.                                      | Imputar el promedio de ventas del municipio correspondiente, excluyendo ceros cuando sea necesario. | `Imputación Promedio Municipio` |
+| C    | `cantidad`        | Cantidad negativa.                                          | Convertir a positivo mediante `ABS(cantidad)`.                                                      | `Signo Negativo Corregido`      |
+| D    | `id_departamento` | Código igual a cero o nulo.                                 | Recuperar el departamento asociado al municipio conocido en otras operaciones.                      | `Departamento Imputado`         |
+| E    | `id_producto`     | Producto faltante en Támesis, Antioquia.                    | Asignar directamente el código del producto `NARANJITA`.                                            | `Producto Imputado (Naranjita)` |
 
 ### 6.2 Registros de ejemplo
 
-| Tipo | `id_registro` | Campo | Valor observado | Tratamiento |
-|---|---:|---|---|---|
-| A | 12110 | `fecha` | Formato diferente de `AAAA-MM-DD`. | Normalización de la fecha. |
-| B | 10225 | `cantidad` | `0`. | Promedio del municipio. |
-| C | 11907 | `cantidad` | `-144`. | `ABS(cantidad)`. |
-| D | 10326 | `id_departamento` | `0` o nulo. | Cruce con el municipio. |
-| E | 10014 | `id_producto` | `0` o nulo en Támesis. | Código de `NARANJITA`. |
+| Tipo | `id_registro` | Campo             | Valor observado                    | Tratamiento                |
+| ---- | ------------: | ----------------- | ---------------------------------- | -------------------------- |
+| A    |         12110 | `fecha`           | Formato diferente de `AAAA-MM-DD`. | Normalización de la fecha. |
+| B    |         10225 | `cantidad`        | `0`.                               | Promedio del municipio.    |
+| C    |         11907 | `cantidad`        | `-144`.                            | `ABS(cantidad)`.           |
+| D    |         10326 | `id_departamento` | `0` o nulo.                        | Cruce con el municipio.    |
+| E    |         10014 | `id_producto`     | `0` o nulo en Támesis.             | Código de `NARANJITA`.     |
 
 ### 6.3 Código SQL representativo de la limpieza
 
@@ -514,7 +520,7 @@ Los resultados de cada consulta se copian desde pgAdmin a Excel. Para los gráfi
 3. Confirmar las columnas `departamento` y `monto_total`.
 4. Exportar el resultado como CSV o copiarlo al portapapeles.
 
-![Pantallazo pgAdmin 8.1](evidencias/pgadmin-8-1.png)
+El resultado de esta consulta se encuentra documentado en el PDF y puede reproducirse sobre `vista_operaciones`.
 
 #### 8.1.2 Gráfico en Excel
 
@@ -526,7 +532,7 @@ Los resultados de cada consulta se copian desde pgAdmin a Excel. Para los gráfi
 6. Insertar un gráfico combinado: columnas para monto y línea para porcentaje acumulado en eje secundario.
 7. Nombrar ejes: X `Departamento`; Y izquierdo `Monto total`; Y derecho `Porcentaje acumulado`.
 
-![Gráfico Excel 8.1](evidencias/excel-pareto-departamentos.png)
+Archivo de datos y gráfico: [grafico_departamentos_top8.xlsx](grafico_departamentos_top8.xlsx).
 
 ### 8.2 Pareto: municipios con mayor cantidad vendida en Antioquia
 
@@ -534,7 +540,7 @@ Los resultados de cada consulta se copian desde pgAdmin a Excel. Para los gráfi
 
 Ejecutar la consulta 7.2 y verificar que el filtro corresponda exclusivamente a `ANTIOQUIA`.
 
-![Pantallazo pgAdmin 8.2](evidencias/pgadmin-8-2.png)
+El resultado de esta consulta se encuentra documentado en el PDF y puede reproducirse sobre `vista_operaciones`.
 
 #### 8.2.2 Gráfico en Excel
 
@@ -544,7 +550,7 @@ Ejecutar la consulta 7.2 y verificar que el filtro corresponda exclusivamente a 
 4. Insertar columnas para cantidad y una línea para el acumulado.
 5. Usar eje X `Municipio`, eje Y izquierdo `Cantidad total` y eje Y derecho `Porcentaje acumulado`.
 
-![Gráfico Excel 8.2](evidencias/excel-pareto-municipios-antioquia.png)
+Archivo de datos y gráfico: [grafico_pareto_municipios.xlsx](grafico_pareto_municipios.xlsx).
 
 ### 8.3 Pareto: departamentos con mayor cantidad de MANZALOCA
 
@@ -552,7 +558,7 @@ Ejecutar la consulta 7.2 y verificar que el filtro corresponda exclusivamente a 
 
 Ejecutar la consulta 7.3 y comprobar que el producto filtrado sea `MANZALOCA`.
 
-![Pantallazo pgAdmin 8.3](evidencias/pgadmin-8-3.png)
+El resultado de esta consulta se encuentra documentado en el PDF y puede reproducirse sobre `vista_operaciones`.
 
 #### 8.3.2 Gráfico en Excel
 
@@ -562,7 +568,7 @@ Ejecutar la consulta 7.3 y comprobar que el producto filtrado sea `MANZALOCA`.
 4. Construir el gráfico combinado de barras y línea.
 5. Usar eje X `Departamento`, eje Y izquierdo `Cantidad de MANZALOCA` y eje Y derecho `Porcentaje acumulado`.
 
-![Gráfico Excel 8.3](evidencias/excel-pareto-manzaloca.png)
+Archivo de datos y gráfico: [grafico_pareto_productos.xlsx](grafico_pareto_productos.xlsx).
 
 ### 8.4 Pareto: municipios con menor monto de ventas
 
@@ -570,7 +576,7 @@ Ejecutar la consulta 7.3 y comprobar que el producto filtrado sea `MANZALOCA`.
 
 Ejecutar la consulta 7.4 y conservar simultáneamente las columnas `departamento`, `municipio` y `monto_total`, ya que el nombre municipal puede repetirse en departamentos diferentes.
 
-![Pantallazo pgAdmin 8.4](evidencias/pgadmin-8-4.png)
+El resultado de esta consulta se encuentra documentado en el PDF y puede reproducirse sobre `vista_operaciones`.
 
 #### 8.4.2 Gráfico en Excel
 
@@ -581,7 +587,7 @@ Ejecutar la consulta 7.4 y conservar simultáneamente las columnas `departamento
 5. Insertar columnas para monto y línea para porcentaje acumulado.
 6. Usar eje X `Departamento - Municipio` y eje Y `Monto total`.
 
-![Gráfico Excel 8.4](evidencias/excel-pareto-municipios-menor-venta.png)
+El archivo Excel disponible para los análisis de Pareto es [grafico_pareto_municipios.xlsx](grafico_pareto_municipios.xlsx).
 
 ### 8.5 Gráfico de torta: productos por región
 
@@ -589,7 +595,7 @@ Ejecutar la consulta 7.4 y conservar simultáneamente las columnas `departamento
 
 Ejecutar la consulta 7.5. Para graficar una región específica, filtrar en Excel por `region`; para una vista global, resumir por producto.
 
-![Pantallazo pgAdmin 8.5](evidencias/pgadmin-8-5.png)
+El resultado de esta consulta se encuentra documentado en el PDF y puede reproducirse sobre `vista_operaciones`.
 
 #### 8.5.2 Gráfico en Excel
 
@@ -600,7 +606,7 @@ Ejecutar la consulta 7.5. Para graficar una región específica, filtrar en Exce
 5. Activar etiquetas con nombre y porcentaje.
 6. Titular el gráfico con la región analizada y el período de datos.
 
-![Gráfico Excel 8.5](evidencias/excel-torta-productos-region.png)
+Archivo de datos y gráfico: [grafico_torta_regiones.xlsx](grafico_torta_regiones.xlsx).
 
 ### 8.6 Gráfico de torta: productos en Antioquia
 
@@ -608,7 +614,7 @@ Ejecutar la consulta 7.5. Para graficar una región específica, filtrar en Exce
 
 Ejecutar la consulta 7.6 y confirmar que el indicador utilizado sea `monto_total`, no `cantidad_total`.
 
-![Pantallazo pgAdmin 8.6](evidencias/pgadmin-8-6.png)
+El resultado de esta consulta se encuentra documentado en el PDF y puede reproducirse sobre `vista_operaciones`.
 
 #### 8.6.2 Gráfico en Excel
 
@@ -618,22 +624,23 @@ Ejecutar la consulta 7.6 y confirmar que el indicador utilizado sea `monto_total
 4. Mostrar nombre del producto, valor monetario y porcentaje.
 5. Verificar que la suma de participaciones sea 100%.
 
-![Gráfico Excel 8.6](evidencias/excel-torta-productos-antioquia.png)
+El archivo Excel de distribución de productos se encuentra disponible como [grafico_pareto_productos.xlsx](grafico_pareto_productos.xlsx).
 
 ## 9. Evidencias de Ejecución y Reproducibilidad
 
 El workspace contiene evidencia audiovisual de la ejecución del ETL y de las corridas del benchmark:
 
-| Evidencia | Archivo |
-|---|---|
-| Ejecución del algoritmo ETL | `evidencia_algoritmo_etl.mp4` |
-| Corrida de 10.000 registros | `Prueba_10mil_registros.mp4` |
-| Corrida de 100.000 registros | `Prueba_100mil_registros.mp4` |
-| Corrida de 1.000.000 registros | `Prueba_1millon_registros.mp4` |
-| Corrida de 10.000.000 registros | `Prueba_10millones_registros.mp4` |
-| Resultados para Pareto de departamentos | `pareto_departamentos.xlsx` |
-| Resultados para Pareto de municipios | `pareto_municipios.xlsx` |
-| Distribución de productos | `distribucion_productos.xlsx` |
+| Evidencia                            | Archivo                                                            |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| Ejecución del algoritmo ETL          | `evidencia_algoritmo_etl.mp4`                                      |
+| Corrida de 10.000 registros          | `Prueba_10mil_registros.mp4`                                       |
+| Corrida de 100.000 registros         | `Prueba_100mil_registros.mp4`                                      |
+| Corrida de 1.000.000 registros       | `Prueba_1millon_registros.mp4`                                     |
+| Corrida de 10.000.000 registros      | `Prueba_10millones_registros.mp4`                                  |
+| Resultados de departamentos          | [grafico_departamentos_top8.xlsx](grafico_departamentos_top8.xlsx) |
+| Resultados para Pareto de municipios | `pareto_municipios.xlsx`                                           |
+| Distribución por regiones            | [grafico_torta_regiones.xlsx](grafico_torta_regiones.xlsx)         |
+| Resultados por producto              | [grafico_pareto_productos.xlsx](grafico_pareto_productos.xlsx)     |
 
 Para reproducir la práctica:
 
@@ -660,12 +667,12 @@ El script también consulta `pg_database_size('bigdata')` y `pg_total_relation_s
 
 ### Resultados registrados
 
-| Registros | Tiempo de procesamiento (ms) | Tamaño tabla `tamanio` | Tamaño BD `bigdata` | Porcentaje de `tamanio` sobre la BD |
-|---:|---:|---:|---:|---:|
-| 10.000 | 20.782,68 | 704,00 KB | 11.205,69 KB (~11 MB) | 6,28% |
-| 100.000 | 191.578,88 | 6.704,00 KB | 17.205,69 KB (~17 MB) | 38,96% |
-| 1.000.000 | 1.772.864,67 | 66.720,00 KB (~65 MB) | 77.229,69 KB (~75 MB) | 86,39% |
-| 10.000.000 | 21.102.522,68 | 666.880,00 KB (~651 MB) | 677.421,69 KB (~662 MB) | 98,44% |
+|  Registros | Tiempo de procesamiento (ms) |  Tamaño tabla `tamanio` |     Tamaño BD `bigdata` | Porcentaje de `tamanio` sobre la BD |
+| ---------: | ---------------------------: | ----------------------: | ----------------------: | ----------------------------------: |
+|     10.000 |                    20.782,68 |               704,00 KB |   11.205,69 KB (~11 MB) |                               6,28% |
+|    100.000 |                   191.578,88 |             6.704,00 KB |   17.205,69 KB (~17 MB) |                              38,96% |
+|  1.000.000 |                 1.772.864,67 |   66.720,00 KB (~65 MB) |   77.229,69 KB (~75 MB) |                              86,39% |
+| 10.000.000 |                21.102.522,68 | 666.880,00 KB (~651 MB) | 677.421,69 KB (~662 MB) |                              98,44% |
 
 > El porcentaje se calcula como `tamanio / tamaño_bd * 100`. Los tiempos corresponden a la evidencia entregada; pueden cambiar según hardware, versión de PostgreSQL, índices, caché y configuración de red.
 
@@ -749,7 +756,7 @@ flowchart TD
 
 ## 13. Conclusiones Individuales
 
-### 13.1 Juan Esteban Correa
+### 13.1 Juan Esteban Correa Cano
 
 Este trabajo permitió pasar de los conceptos de clase a un escenario con datos desordenados, relaciones entre entidades y necesidades reales de análisis. El proceso ETL mostró que extraer y cargar información no es suficiente: es necesario validar formatos, corregir inconsistencias y conservar evidencia de cada transformación. También permitió fortalecer el uso de consultas SQL con `JOIN`, agrupaciones y funciones de agregación, además de comprender cómo un diagrama de Pareto ayuda a priorizar decisiones comerciales.
 
@@ -761,17 +768,17 @@ La práctica evidenció que el valor de los datos depende de su calidad y del co
 
 ### Guion sugerido para una presentación de 5 a 15 minutos
 
-| Tiempo aproximado | Contenido |
-|---:|---|
-| 0:00-1:00 | Presentación del equipo, empresa y objetivo de la práctica. |
-| 1:00-3:00 | Explicación del modelo entidad-relación y de las relaciones principales. |
-| 3:00-5:00 | Demostración de Extract, Transform y Load con el CSV y PostgreSQL. |
-| 5:00-7:00 | Explicación de la dimensión `regiones` y la valorización de `id_region`. |
-| 7:00-9:00 | Ejemplos de incidencias A-E y campos de auditoría. |
-| 9:00-11:00 | Presentación de las consultas sobre `vista_operaciones`. |
-| 11:00-13:00 | Explicación de los gráficos de Pareto y de torta. |
-| 13:00-14:30 | Benchmark de tiempo y tamaño para los cuatro volúmenes. |
-| 14:30-15:00 | Conclusiones y recomendaciones para la empresa. |
+| Tiempo aproximado | Contenido                                                                |
+| ----------------: | ------------------------------------------------------------------------ |
+|         0:00-1:00 | Presentación del equipo, empresa y objetivo de la práctica.              |
+|         1:00-3:00 | Explicación del modelo entidad-relación y de las relaciones principales. |
+|         3:00-5:00 | Demostración de Extract, Transform y Load con el CSV y PostgreSQL.       |
+|         5:00-7:00 | Explicación de la dimensión `regiones` y la valorización de `id_region`. |
+|         7:00-9:00 | Ejemplos de incidencias A-E y campos de auditoría.                       |
+|        9:00-11:00 | Presentación de las consultas sobre `vista_operaciones`.                 |
+|       11:00-13:00 | Explicación de los gráficos de Pareto y de torta.                        |
+|       13:00-14:30 | Benchmark de tiempo y tamaño para los cuatro volúmenes.                  |
+|       14:30-15:00 | Conclusiones y recomendaciones para la empresa.                          |
 
 **Enlace del video:** [URL DEL VIDEO AQUÍ]
 
