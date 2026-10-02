@@ -780,7 +780,7 @@ La práctica evidenció que el valor de los datos depende de su calidad y del co
 |       13:00-14:30 | Benchmark de tiempo y tamaño para los cuatro volúmenes.                  |
 |       14:30-15:00 | Conclusiones y recomendaciones para la empresa.                          |
 
-**Enlace del video:** [URL DEL VIDEO AQUÍ]
+**Enlace del video:** [Ver video explicativo en YouTube](https://www.youtube.com/watch?v=0WVjB5ZyPaE)
 
 ### Material audiovisual disponible en el workspace
 
