@@ -764,21 +764,7 @@ Este trabajo permitió pasar de los conceptos de clase a un escenario con datos 
 
 La práctica evidenció que el valor de los datos depende de su calidad y del contexto con el que se interpretan. Probar cargas de hasta diez millones de registros permitió observar que el crecimiento del volumen aumenta el tiempo y el almacenamiento cuando se insertan filas de manera individual. El análisis geográfico mostró que una cifra alta o baja no siempre explica por sí sola el comportamiento del mercado: puede reflejar logística, compras mayoristas, inventario o errores de captura. Por ello, la Ingeniería de Datos y la Ciencia de Datos deben trabajar juntas para transformar registros en decisiones verificables.
 
-## 14. Video Explicativo
-
-### Guion sugerido para una presentación de 5 a 15 minutos
-
-| Tiempo aproximado | Contenido                                                                |
-| ----------------: | ------------------------------------------------------------------------ |
-|         0:00-1:00 | Presentación del equipo, empresa y objetivo de la práctica.              |
-|         1:00-3:00 | Explicación del modelo entidad-relación y de las relaciones principales. |
-|         3:00-5:00 | Demostración de Extract, Transform y Load con el CSV y PostgreSQL.       |
-|         5:00-7:00 | Explicación de la dimensión `regiones` y la valorización de `id_region`. |
-|         7:00-9:00 | Ejemplos de incidencias A-E y campos de auditoría.                       |
-|        9:00-11:00 | Presentación de las consultas sobre `vista_operaciones`.                 |
-|       11:00-13:00 | Explicación de los gráficos de Pareto y de torta.                        |
-|       13:00-14:30 | Benchmark de tiempo y tamaño para los cuatro volúmenes.                  |
-|       14:30-15:00 | Conclusiones y recomendaciones para la empresa.                          |
+## 14. Video Explicativo                   |
 
 **Enlace del video:** [Ver video explicativo en YouTube](https://www.youtube.com/watch?v=0WVjB5ZyPaE)
 
